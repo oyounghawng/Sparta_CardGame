@@ -8,11 +8,12 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public Text timeTxt;
+    public GameObject minusTimeTxt; //시간 감소 알려주는 텍스트
     public GameObject endTxt;
     public Card firstCard;
     public Card secondCard;
 
-    float time = 0;
+    float time = 30;
     public int cardCount = 0;
 
     AudioSource audioSource;
@@ -31,9 +32,9 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        time += Time.deltaTime;
+        time -= Time.deltaTime;
         timeTxt.text = time.ToString("N2");
-        if(time > 30f)
+        if(time < 0f)
         {
             endTxt.SetActive(true);
             Time.timeScale = 0f;
@@ -42,7 +43,7 @@ public class GameManager : MonoBehaviour
     }
     public void isMatched()
     {
-        if(firstCard.idx == secondCard.idx)
+        if (firstCard.idx == secondCard.idx)
         {
             audioSource.PlayOneShot(clip);
             firstCard.DestroyCard();
@@ -58,9 +59,17 @@ public class GameManager : MonoBehaviour
         {
             firstCard.CloseCard();
             secondCard.CloseCard();
+
+            minusTimeTxt.SetActive(true);
+            time -= 1; // 못맞추면 시간 -1초
+            Invoke("TimeMinus", 0.5f); // 0.5초동안 텍스트 실행
         }
 
         firstCard = null;
         secondCard = null;
+    }
+    public void TimeMinus()
+    {
+        minusTimeTxt.SetActive(false);
     }
 }

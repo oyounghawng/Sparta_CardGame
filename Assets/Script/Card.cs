@@ -10,6 +10,7 @@ public class Card : MonoBehaviour
 
     public Animator anim;
     public SpriteRenderer frontImage;
+    public SpriteRenderer backImage;
 
     AudioSource audioSource;
     public AudioClip clip;
@@ -23,20 +24,22 @@ public class Card : MonoBehaviour
     {
         idx = number;
         frontImage.sprite = Resources.Load<Sprite>($"Images/rtan{idx}");
-       
+        backImage = transform.Find("Back").GetComponent<SpriteRenderer>();
     }
 
     public void OnepnCard()
     {
         if (GameManager.instance.secondCard != null) return;
 
-
         audioSource.PlayOneShot(clip);
         anim.SetBool("isOpen", true);
         front.SetActive(true);
         back.SetActive(false);
 
-        if(GameManager.instance.firstCard == null)
+        // 클릭된 카드 뒷면 색깔 회색으로 고정
+        backImage.color = new Color(200 / 255f, 200 / 255f, 200 / 255f, 255f);
+
+        if (GameManager.instance.firstCard == null)
         {
             GameManager.instance.firstCard = this;
         }
@@ -45,6 +48,14 @@ public class Card : MonoBehaviour
             GameManager.instance.secondCard = this;
             GameManager.instance.isMatched();
         }
+
+        // firstCard가 null이 아니고 SecondCard가 null일 때 5초 세고 카드 닫기
+        if (GameManager.instance.firstCard != null && 
+            GameManager.instance.secondCard == null)
+        {
+            Invoke("CloseCard", 5f);
+        }
+
     }
 
     public void DestroyCard()
@@ -67,4 +78,5 @@ public class Card : MonoBehaviour
         front.SetActive(false);
         back.SetActive(true);
     }
+
 }

@@ -487,6 +487,7 @@ MonoBehaviour:
   endOverlay: {fileID: 2003785195}
   firstCard: {fileID: 0}
   secondCard: {fileID: 0}
+  BestScore: 0
   cardCount: 0
   clip: {fileID: 8300000, guid: a9595689b19da5443b3317f1a143b9f0, type: 3}
 --- !u!82 &334672183
@@ -1432,6 +1433,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   card: {fileID: 821990416950042362, guid: 829746fa70618f145b66148c0151bcfe, type: 3}
+  CardCount: 0
+  ImageCount: 8
+  arr: 
+  CardMap: 00000000000101000001010000000000
 --- !u!1 &1538270284
 GameObject:
   m_ObjectHideFlags: 0

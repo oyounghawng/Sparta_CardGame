@@ -23,7 +23,6 @@ public class Card : MonoBehaviour
     {
         idx = number;
         frontImage.sprite = Resources.Load<Sprite>($"Images/rtan{idx}");
-       
     }
 
     public void OnepnCard()

@@ -44,19 +44,6 @@ public class AudioManager : MonoBehaviour
             }
         }
     }
-
-    private void OnEnable()
-    {
-        GameManager.instance.onPlay += Play;
-    }
-
-    private void OnDisable()
-    {
-        GameManager.instance.onPlay -= Play;
-    }
-
-
-
     public void Play()
     {
         if(bgm != null)

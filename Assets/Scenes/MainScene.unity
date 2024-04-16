@@ -476,6 +476,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
+  level: 0
   timeTxt: {fileID: 1105640395}
   limitTimeTxt: {fileID: 674196606}
   resultTxt: {fileID: 1051536006}
@@ -491,6 +492,7 @@ MonoBehaviour:
   ResultCurrentScoreTxt: {fileID: 288386376}
   TimeVar: 100
   TryVar: 1
+  BestRecords: 000000000000000000000000
   endOverlay: {fileID: 847094315}
   BestScore: 0
   cardCount: 0
@@ -2059,9 +2061,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 821990416950042362, guid: 829746fa70618f145b66148c0151bcfe, type: 3}
   CardCount: 0
-  ImageCount: 0
+  ImageCount: 5
   arr: 
-  CardMap: 01010101010101010101010101010101
+  CardMap: 0101010101010101010100000000000001010101
+  stageArray:
+  - map: 0000000001010101010000010101010100000000
+  - map: 0001010001010101010101010101010100010100
+  - map: 0101010101010101010101010101010101010101
 --- !u!1 &1588200277
 GameObject:
   m_ObjectHideFlags: 0

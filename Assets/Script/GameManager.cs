@@ -8,12 +8,14 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public Text timeTxt;
-    public GameObject minusTimeTxt; //시간 감소 알려주는 텍스트
+    public Text limitTimeTxt; // 제한 시간 텍스트
+    public GameObject minusTimeTxt; // 시간 감소 알려주는 텍스트
     public GameObject endTxt;
     public Card firstCard;
     public Card secondCard;
 
     float time = 30;
+    bool isCount = false; // 카운트 다운 시작하는지 안하는지
     public int cardCount = 0;
 
     AudioSource audioSource;
@@ -38,9 +40,51 @@ public class GameManager : MonoBehaviour
         {
             endTxt.SetActive(true);
             Time.timeScale = 0f;
+        }
 
+        // firstCard가 null이 아니고 SecondCard가 null일 때 5초 세고 카드 닫기
+        if (firstCard != null && secondCard == null)
+        {
+            
+            if (!isCount)
+            {
+                StartCoroutine(CountDown()); // 코루틴 실행
+            }
         }
     }
+
+    IEnumerator CountDown()
+    {
+        isCount = true;
+        limitTimeTxt.gameObject.SetActive(true);
+
+        float countdownTime = 5f;
+
+        if (secondCard != null)
+        {
+            Debug.Log("두번째카드선택");
+            StopCoroutine(CountDown());
+            limitTimeTxt.gameObject.SetActive(false);
+        }
+
+        while (countdownTime > 0f)
+        {
+            limitTimeTxt.text = countdownTime.ToString();
+            yield return new WaitForSeconds(1f);
+            countdownTime -= 1f;
+        }
+
+        // 카운트다운 종료 후 firstCard 뒤집기
+        if(firstCard != null)
+        {
+            firstCard.CloseCard();
+            firstCard = null;
+        }
+
+        limitTimeTxt.gameObject.SetActive(false);
+        isCount = false;
+    }
+
     public void isMatched()
     {
         if (firstCard.idx == secondCard.idx)

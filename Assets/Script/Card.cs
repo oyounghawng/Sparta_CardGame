@@ -48,14 +48,6 @@ public class Card : MonoBehaviour
             GameManager.instance.secondCard = this;
             GameManager.instance.isMatched();
         }
-
-        // firstCard가 null이 아니고 SecondCard가 null일 때 5초 세고 카드 닫기
-        if (GameManager.instance.firstCard != null && 
-            GameManager.instance.secondCard == null)
-        {
-            Invoke("CloseCard", 5f);
-        }
-
     }
 
     public void DestroyCard()

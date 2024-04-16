@@ -45,6 +45,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
     [Header("TimeText")]
+    public int level;
+
     public Text timeTxt;
     public Text limitTimeTxt;
     public Text resultTxt;
@@ -68,11 +70,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] int TimeVar = 100;
     [SerializeField] int TryVar = 1;
 
+    /////////////////////////// inspector�� �ְ���� Ȯ�ο� ////////////////////////////////
+    [SerializeField] int[] BestRecords = new int[3];
+
     public GameObject endOverlay;
     [SerializeField] int BestScore = 0;
 
     float time = 15.0f;
     float countdownTime = 5f;
+    public Card firstCard;
+    public Card secondCard;
+
+    float time = 0;
     int CurrentScore;
     int TryTimes;
 
@@ -90,6 +99,7 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        level = PlayerPrefs.GetInt("Level");
         Time.timeScale = 1f;
         state = Define.GameState.Ready;
         Ready();
@@ -101,6 +111,12 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         switch (state)
+        time += Time.deltaTime;
+        timeTxt.text = time.ToString("N2");
+        BestScoreTxt.text = LoadBestRecord(level).ToString() ;
+        CurrentScoreTxt.text = CurrentScore.ToString();
+        TryTimesTxt.text = TryTimes.ToString();
+        if (time > 30f)
         {
             case Define.GameState.Ready:
 
@@ -257,9 +273,20 @@ public class GameManager : MonoBehaviour
     public void UpdateScore()
     {
         CurrentScore = (int)(time * TimeVar - TryTimes * TryVar);
+        int BestScore = LoadBestRecord(level);
+        if (CurrentScore > BestScore)
+        {
+            SaveBestRecord(CurrentScore, level);
+        }
+        /////////////////////////// inspector�� �ְ���� Ȯ�ο� ////////////////////////////////
+        for (int i = 0; i < 3; i++)
+        {
+            BestRecords[i] = LoadBestRecord(i);
+        }
     }
     public void EndGame()
     {
+        UpdateScore();
         ResultTimeTxt.text = timeTxt.text;
         ResultTryTimesTxt.text = TryTimesTxt.text;
         ResultCurrentScoreTxt.text = CurrentScoreTxt.text;
@@ -267,3 +294,12 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 } 
+    public void SaveBestRecord(int score, int level)
+    {
+        PlayerPrefs.SetInt("BestRecord" + level.ToString(), score);
+    }
+    public int LoadBestRecord(int level)
+    {
+        return PlayerPrefs.GetInt("BestRecord" + level.ToString());
+    }
+}

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -8,6 +10,8 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public Text timeTxt;
+    public Text resultTxt;
+
     public GameObject endTxt;
     public Card firstCard;
     public Card secondCard;
@@ -54,11 +58,21 @@ public class GameManager : MonoBehaviour
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;
+            string name = "";
+            switch(firstCard.idx)
+            {
+                case 0:
+                    name = "황오영";
+                    break;
+  
+            }
             if (cardCount == 0)
             {
                 Time.timeScale = 0;
                 endTxt.SetActive(true);
             }
+            resultTxt.text = name;
+            resultTxt.color = Color.white;
         }
         else
         {
@@ -66,9 +80,11 @@ public class GameManager : MonoBehaviour
             secondCard.CloseCard();
             audioSource.clip = failclip;
             audioSource.Play();
+            resultTxt.text = "실패";
+            resultTxt.color = Color.red;
         }
-
         firstCard = null;
         secondCard = null;
     }
+   
 }

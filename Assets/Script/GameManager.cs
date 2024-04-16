@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
             state = Define.GameState.Play;
             timeTxt.gameObject.SetActive(true);
             onPlay.Invoke();
-
+            AudioManager.instance.Play();
         }
     }
 
@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] int TimeVar = 100;
     [SerializeField] int TryVar = 1;
 
-    /////////////////////////// inspector�� �ְ���� Ȯ�ο� ////////////////////////////////
+    /////////////////////////// inspector로 최고기록 확인용 ////////////////////////////////
     [SerializeField] int[] BestRecords = new int[3];
 
     public GameObject endOverlay;
@@ -78,10 +78,6 @@ public class GameManager : MonoBehaviour
 
     float time = 15.0f;
     float countdownTime = 5f;
-    public Card firstCard;
-    public Card secondCard;
-
-    float time = 0;
     int CurrentScore;
     int TryTimes;
 
@@ -111,13 +107,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         switch (state)
-        time += Time.deltaTime;
-        timeTxt.text = time.ToString("N2");
-        BestScoreTxt.text = LoadBestRecord(level).ToString() ;
-        CurrentScoreTxt.text = CurrentScore.ToString();
-        TryTimesTxt.text = TryTimes.ToString();
-        if (time > 30f)
-        {
+        { 
             case Define.GameState.Ready:
 
                 break;
@@ -131,7 +121,14 @@ public class GameManager : MonoBehaviour
 
                 break;
         }
+        UpdateUIScore();
         OpenCountDown();
+    }
+    private void UpdateUIScore()
+    {
+        BestScoreTxt.text = LoadBestRecord(level).ToString();
+        CurrentScoreTxt.text = CurrentScore.ToString();
+        TryTimesTxt.text = TryTimes.ToString();
     }
     private void OpenCountDown()
     {
@@ -199,8 +196,6 @@ public class GameManager : MonoBehaviour
             timeTxt.rectTransform.localScale = new Vector3(alertSize, alertSize, 1);
         }
     }
-
-
     public void isMatched()
     {
         if (firstCard.idx == secondCard.idx)
@@ -269,7 +264,6 @@ public class GameManager : MonoBehaviour
     {
         minusTimeTxt.SetActive(false);
     }
-
     public void UpdateScore()
     {
         CurrentScore = (int)(time * TimeVar - TryTimes * TryVar);
@@ -293,7 +287,6 @@ public class GameManager : MonoBehaviour
         endOverlay.SetActive(true);
         Time.timeScale = 0f;
     }
-} 
     public void SaveBestRecord(int score, int level)
     {
         PlayerPrefs.SetInt("BestRecord" + level.ToString(), score);

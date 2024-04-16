@@ -18,11 +18,10 @@ public class Board : MonoBehaviour
 {
     public GameObject card;
     public int CardCount;
-    public int ImageCount;
     public int ImageCount = 5;
     public int[] arr;
 
-    private int level;
+    private int level = 0;
 
     public bool[] CardMap = new bool[20];
 
@@ -46,7 +45,7 @@ public class Board : MonoBehaviour
         // 카드의 배열을 수동적으로 생성 문제
         // int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
         int[] arr = new int[Resources.LoadAll<Sprite>("Images/TeamPic").Length * 2];
-        ImageCount = arr.Length/2;
+        ImageCount = arr.Length / 2;
         for (int q = 0; q < arr.Length; q++)
         {
             arr[q] = q / 2;
@@ -54,6 +53,7 @@ public class Board : MonoBehaviour
 
         // 배열 수 만큼 랜덤하게 나눔
         //arr = arr.OrderBy(x => Random.Range(0f, arr.Length)).ToArray();
+
         foreach (bool b in CardMap)
         {
             if (b) CardCount++;
@@ -77,14 +77,10 @@ public class Board : MonoBehaviour
         */
 
         //arr = new int[CardCount];
-        //CreateUnDuplicateRandomArray();
         int i = 0;
-        while (i < CardCount)
         arr = new int[CardCount];
-        CreateDuplicateRandomArray();
-
-        int temp = 0;
-        for (int i = 0; i < 20; i++)
+        //CreateDuplicateRandomArray();
+        while (i < CardCount)
         {
             if (stageArray[level].map[i])
             {
@@ -92,17 +88,16 @@ public class Board : MonoBehaviour
                 GameObject go = Instantiate(card, this.transform);
                 float x = (i % 4) * 1.4f - 2.1f;
                 float y = (i / 4) * 1.4f - 3.0f;
-                float y = 1.6f - (i / 4) * 1.4f;
-
+                //float y = 1.6f - (i / 4) * 1.4f;
                 Vector3 dest = new Vector3(x, y, 0f);
                 go.transform.position = dest + new Vector3(x + 2f, y - 2f, 0);
                 Card cd = go.GetComponent<Card>();
                 cd.Dest = dest;
                 cd.Setting(arr[i]);
-
                 yield return new WaitUntil(() => Vector3.Distance(dest, cd.transform.position) <= 0f);
             }
             i++;
+
         }
         GameManager.instance.cardCount = arr.Length;
         AudioManager.instance.Play(AudioManager.instance.startSound);
@@ -110,18 +105,13 @@ public class Board : MonoBehaviour
     }
     void CreateDuplicateRandomArray()
     {
-        int currentNumber = Random.Range(0, ImageCount);
         for (int i = 0; i < CardCount;)
-        for (int i = 0; i < CardCount ; )
         {
-                int currentNumber = Random.Range(0, ImageCount);
-                arr[i] = currentNumber;
-                arr[i + 1] = currentNumber;
-                i += 2;
-            }
-                i+=2;
+            int currentNumber = Random.Range(0, ImageCount);
+            arr[i] = currentNumber;
+            arr[i + 1] = currentNumber;
+            i += 2;
         }
         arr = arr.OrderBy(x => Random.Range(0, ImageCount - 1)).ToArray();
     }
-
 }

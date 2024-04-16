@@ -74,7 +74,6 @@ public class Card : MonoBehaviour
         idx = number;
         frontImage.sprite = Resources.Load<Sprite>($"Images/TeamPic/{idx}");
         backImage = transform.Find("Back").GetComponent<SpriteRenderer>();
-        frontImage.sprite = Resources.Load<Sprite>($"Images/rtan{idx}");
     }
 
     public void OnepnCard()
@@ -88,7 +87,7 @@ public class Card : MonoBehaviour
             front.SetActive(true);
             back.SetActive(false);
 
-            // Ŭ���� ī�� �޸� ���� ȸ������ ����
+            // 클릭된 카드 뒷면 색깔 회색으로 고정
             backImage.color = new Color(200 / 255f, 200 / 255f, 200 / 255f, 255f);
 
             if (GameManager.instance.firstCard == null)

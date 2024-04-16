@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    #region  GameState
     public Define.GameState state = Define.GameState.Ready;
 
     public void Ready()
@@ -43,20 +42,24 @@ public class GameManager : MonoBehaviour
         if (onGameOver != null)
             onGameOver.Invoke();
     }
+    #endregion
 
+    [Header("TimeText")]
     public Text timeTxt;
-    public Text limitTimeTxt; // ���� �ð� �ؽ�Ʈ
-    public Text resultTxt; // ��� �ؽ�Ʈ
-    public GameObject minusTimeTxt; // �ð� ���� �˷��ִ� �ؽ�Ʈ
-    public GameObject endTxt;
-    public Card firstCard;
-    public Card secondCard;
+    public Text limitTimeTxt;
+    public Text resultTxt;
+    public GameObject minusTimeTxt;
 
-    float time = 15.0f;
-    float countdownTime = 5f;
+    [Header("ScoreText")]
     public Text BestScoreTxt;
     public Text CurrentScoreTxt;
     public Text TryTimesTxt;
+
+    [Header("Card")]
+    public Card firstCard;
+    public Card secondCard;
+
+    public GameObject endTxt;
 
     public Text ResultTimeTxt;
     public Text ResultTryTimesTxt;
@@ -66,11 +69,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] int TryVar = 1;
 
     public GameObject endOverlay;
-    public Card firstCard;
-    public Card secondCard;
-
-    float time = 0;
     [SerializeField] int BestScore = 0;
+
+    float time = 15.0f;
+    float countdownTime = 5f;
     int CurrentScore;
     int TryTimes;
 
@@ -117,8 +119,8 @@ public class GameManager : MonoBehaviour
     }
     private void OpenCountDown()
     {
-        // firstCard�� null�� �ƴϰ� SecondCard�� null�� �� 5�� ���� ī�� �ݱ�
-        // ù��° ī�带 ������ ��
+        // firstCard가 null이 아니고 SecondCard가 null일 때 5초 세고 카드 닫기
+        // 첫번째 카드를 눌렀을 때
         if (firstCard != null && secondCard == null)
         {
             countdownTime -= Time.deltaTime;
@@ -136,17 +138,17 @@ public class GameManager : MonoBehaviour
         {
             limitTimeTxt.gameObject.SetActive(false);
             countdownTime = 5f;
-        time += Time.deltaTime;
-        timeTxt.text = time.ToString("N2");
-        BestScoreTxt.text = BestScore.ToString() ;
-        CurrentScoreTxt.text = CurrentScore.ToString();
-        TryTimesTxt.text = TryTimes.ToString();
-        if (time > 30f)
-        {
-            EndGame();
+            time += Time.deltaTime;
+            timeTxt.text = time.ToString("N2");
+            BestScoreTxt.text = BestScore.ToString();
+            CurrentScoreTxt.text = CurrentScore.ToString();
+            TryTimesTxt.text = TryTimes.ToString();
+            if (time > 30f)
+            {
+                EndGame();
+            }
         }
     }
-
     private void GamePlay()
     {
         time -= Time.deltaTime;
@@ -164,9 +166,7 @@ public class GameManager : MonoBehaviour
         }
         else if (time < 10f)
         {
-            // TODO Ÿ�̸��� ���� ����
             timeTxt.color = Color.red;
-
 
             float alertSize = 0;
 
@@ -188,9 +188,9 @@ public class GameManager : MonoBehaviour
     public void isMatched()
     {
         if (firstCard.idx == secondCard.idx)
-        TryTimes++;
+            TryTimes++;
         UpdateScore();
-        if(firstCard.idx == secondCard.idx)
+        if (firstCard.idx == secondCard.idx)
         {
             audioSource.PlayOneShot(clip);
             firstCard.DestroyCard();
@@ -204,9 +204,28 @@ public class GameManager : MonoBehaviour
             switch (firstCard.idx)
             {
                 case 0:
-                    name = "Ȳ����";
+                case 1:
+                    name = "이수현";
                     break;
-
+                case 2:
+                case 3:
+                    name = "황오영";
+                    break;
+                case 4:
+                case 5:
+                    name = "김한진";
+                    break;
+                case 6:
+                case 7:
+                    name = "문향기";
+                    break;
+                case 8:
+                case 9:
+                    name = "김홍진";
+                    break;
+                default:
+                    name = "";
+                    break;
             }
             resultTxt.text = name;
             resultTxt.color = Color.white;
@@ -218,13 +237,13 @@ public class GameManager : MonoBehaviour
 
             audioSource.clip = AudioManager.instance.failClip;
             audioSource.Play();
-            resultTxt.text = "����";
+            resultTxt.text = "실패";
             resultTxt.color = Color.red;
 
 
             minusTimeTxt.SetActive(true);
-            time -= 1; // �����߸� �ð� -1��
-            Invoke("TimeMinus", 0.5f); // 0.5�ʵ��� �ؽ�Ʈ ����
+            time -= 1; //못맞추면 시간 -1초
+            Invoke("TimeMinus", 0.5f); //0.5초동안 텍스트 실행
         }
 
         firstCard = null;
@@ -233,6 +252,8 @@ public class GameManager : MonoBehaviour
     public void TimeMinus()
     {
         minusTimeTxt.SetActive(false);
+    }
+
     public void UpdateScore()
     {
         CurrentScore = (int)(time * TimeVar - TryTimes * TryVar);
@@ -245,4 +266,4 @@ public class GameManager : MonoBehaviour
         endOverlay.SetActive(true);
         Time.timeScale = 0f;
     }
-}
+} 

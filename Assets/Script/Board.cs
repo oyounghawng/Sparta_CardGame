@@ -7,24 +7,34 @@ using System.Linq;
 using Random = UnityEngine.Random;
 using System.Security.Cryptography.X509Certificates;
 
+[System.Serializable]
+public struct MapArray
+{
+    public bool[] map;
+}
+
 
 public class Board : MonoBehaviour
 {
     public GameObject card;
     public int CardCount;
-    public int ImageCount = 8;
+    public int ImageCount = 5;
     public int[] arr;
-    private List<int> randomList = new List<int>();
 
-    public bool[] CardMap = new bool[16];
+    private int level;
+
+    public bool[] CardMap = new bool[20];
+
+    public MapArray[] stageArray;
 
     void Start()
     {
-        foreach(bool b in CardMap)
+        level = GameManager.instance.level;
+        foreach (bool b in stageArray[level].map)
         {
             if (b) CardCount++;
         }
-        if(CardCount % 2 == 1 || CardCount < 2)
+        if (CardCount % 2 == 1 || CardCount < 2)
         {
             Debug.Log("카드 수 가 홀수 이거나 1개 이하입니다.");
             Application.Quit();
@@ -36,17 +46,17 @@ public class Board : MonoBehaviour
         }
 
         arr = new int[CardCount];
-        CreateUnDuplicateRandomArray();
+        CreateDuplicateRandomArray();
 
         int temp = 0;
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 20; i++)
         {
-            if (CardMap[i])
+            if (stageArray[level].map[i])
             {
                 GameObject go = Instantiate(card, this.transform);
 
                 float x = (i % 4) * 1.4f - 2.1f;
-                float y = 1.2f - (i / 4) * 1.4f;
+                float y = 1.6f - (i / 4) * 1.4f;
 
                 go.transform.position = new Vector2(x, y);
                 go.GetComponent<Card>().Setting(arr[temp]);
@@ -56,22 +66,14 @@ public class Board : MonoBehaviour
 
         GameManager.instance.cardCount = arr.Length;
     }
-    void CreateUnDuplicateRandomArray()
+    void CreateDuplicateRandomArray()
     {
-        int currentNumber = Random.Range(0, ImageCount);
         for (int i = 0; i < CardCount ; )
         {
-            if (randomList.Contains(currentNumber))
-            {
-                currentNumber = Random.Range(0, ImageCount);
-            }
-            else
-            {
-                randomList.Add(currentNumber);
+                int currentNumber = Random.Range(0, ImageCount);
                 arr[i] = currentNumber;
                 arr[i + 1] = currentNumber;
                 i+=2;
-            }
         }
         arr = arr.OrderBy(x => Random.Range(0, ImageCount-1)).ToArray();
     }

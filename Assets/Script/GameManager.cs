@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    public int level;
+
     public Text timeTxt;
     public Text BestScoreTxt;
     public Text CurrentScoreTxt;
@@ -19,12 +21,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] int TimeVar = 100;
     [SerializeField] int TryVar = 1;
 
+    /////////////////////////// inspector로 최고기록 확인용 ////////////////////////////////
+    [SerializeField] int[] BestRecords = new int[3];
+
     public GameObject endOverlay;
     public Card firstCard;
     public Card secondCard;
 
     float time = 0;
-    [SerializeField] int BestScore = 0;
     int CurrentScore;
     int TryTimes;
 
@@ -41,6 +45,7 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        level = PlayerPrefs.GetInt("Level");
         Time.timeScale = 1f;
         CurrentScore = 0;
         TryTimes = 0;
@@ -50,7 +55,7 @@ public class GameManager : MonoBehaviour
     {
         time += Time.deltaTime;
         timeTxt.text = time.ToString("N2");
-        BestScoreTxt.text = BestScore.ToString() ;
+        BestScoreTxt.text = LoadBestRecord(level).ToString() ;
         CurrentScoreTxt.text = CurrentScore.ToString();
         TryTimesTxt.text = TryTimes.ToString();
         if (time > 30f)
@@ -85,13 +90,32 @@ public class GameManager : MonoBehaviour
     public void UpdateScore()
     {
         CurrentScore = (int)(time * TimeVar - TryTimes * TryVar);
+        int BestScore = LoadBestRecord(level);
+        if (CurrentScore > BestScore)
+        {
+            SaveBestRecord(CurrentScore, level);
+        }
+        /////////////////////////// inspector로 최고기록 확인용 ////////////////////////////////
+        for (int i = 0; i < 3; i++)
+        {
+            BestRecords[i] = LoadBestRecord(i);
+        }
     }
     public void EndGame()
     {
+        UpdateScore();
         ResultTimeTxt.text = timeTxt.text;
         ResultTryTimesTxt.text = TryTimesTxt.text;
         ResultCurrentScoreTxt.text = CurrentScoreTxt.text;
         endOverlay.SetActive(true);
         Time.timeScale = 0f;
+    }
+    public void SaveBestRecord(int score, int level)
+    {
+        PlayerPrefs.SetInt("BestRecord" + level.ToString(), score);
+    }
+    public int LoadBestRecord(int level)
+    {
+        return PlayerPrefs.GetInt("BestRecord" + level.ToString());
     }
 }

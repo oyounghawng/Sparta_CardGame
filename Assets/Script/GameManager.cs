@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
 
 
     public Text timeTxt;
+    public Text resultTxt;
+
     public GameObject endTxt;
     public Card firstCard;
     public Card secondCard;
@@ -70,8 +72,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         state = Define.GameState.Ready;
         Ready();
-
-    audioSource = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
     private void Update()
     {
@@ -89,9 +90,7 @@ public class GameManager : MonoBehaviour
             case Define.GameState.GameOver:
 
                 break;
-
         }
-
     }
 
 
@@ -132,27 +131,39 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     public void isMatched()
     {
-        if(firstCard.idx == secondCard.idx)
+        if (firstCard.idx == secondCard.idx)
         {
             audioSource.PlayOneShot(clip);
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;
+            string name = "";
+            switch (firstCard.idx)
+            {
+                case 0:
+                    name = "황오영";
+                    break;
+
+            }
             if (cardCount == 0)
             {
                 Time.timeScale = 0;
                 endTxt.SetActive(true);
             }
+            resultTxt.text = name;
+            resultTxt.color = Color.white;
         }
         else
         {
             firstCard.CloseCard();
             secondCard.CloseCard();
+            audioSource.clip = AudioManager.instance.failClip;
+            audioSource.Play();
+            resultTxt.text = "실패";
+            resultTxt.color = Color.red;
         }
-
         firstCard = null;
         secondCard = null;
     }

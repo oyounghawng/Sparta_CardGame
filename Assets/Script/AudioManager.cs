@@ -12,7 +12,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip alert;
     public AudioClip startSound;
     public AudioClip cardSet;
-
+    public AudioClip failClip;
 
     private void Awake()
     {

@@ -66,13 +66,10 @@ public class Card : MonoBehaviour
             isMove = false;
         }
     }
-
-
     public void Setting(int number)
     {
         idx = number;
-        frontImage.sprite = Resources.Load<Sprite>($"Images/CardImages/rtan{idx}");
-       
+        frontImage.sprite = Resources.Load<Sprite>($"Images/TeamPic/{idx}");
     }
 
     public void OnepnCard()

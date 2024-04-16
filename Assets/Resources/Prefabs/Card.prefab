@@ -53,6 +53,7 @@ MonoBehaviour:
   back: {fileID: 8825552962648684018}
   anim: {fileID: 2977183498387802209}
   frontImage: {fileID: 4162148137173217013}
+  backImage: {fileID: 4419863165938929116}
   clip: {fileID: 8300000, guid: a99d51821727a02468ceba7ca4a4c082, type: 3}
   isMove: 0
   canTouch: 0

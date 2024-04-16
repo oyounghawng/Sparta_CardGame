@@ -74,6 +74,7 @@ public class Card : MonoBehaviour
         idx = number;
         frontImage.sprite = Resources.Load<Sprite>($"Images/TeamPic/{idx}");
         backImage = transform.Find("Back").GetComponent<SpriteRenderer>();
+        frontImage.sprite = Resources.Load<Sprite>($"Images/rtan{idx}");
     }
 
     public void OnepnCard()
@@ -87,7 +88,7 @@ public class Card : MonoBehaviour
             front.SetActive(true);
             back.SetActive(false);
 
-            // Å¬¸¯µÈ Ä«µå µÞ¸é »ö±ò È¸»öÀ¸·Î °íÁ¤
+            // Å¬ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             backImage.color = new Color(200 / 255f, 200 / 255f, 200 / 255f, 255f);
 
             if (GameManager.instance.firstCard == null)

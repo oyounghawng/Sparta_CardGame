@@ -1,6 +1,11 @@
+using UnityEngine;
+using UnityEngine.UI;
+using System;
 using System.Collections;
 using System.Linq;
-using UnityEngine;
+using Random = UnityEngine.Random;
+using System.Security.Cryptography.X509Certificates;
+
 
 public class Board : MonoBehaviour
 {
@@ -15,14 +20,14 @@ public class Board : MonoBehaviour
 
 
     /// <summary>
-    /// °ÔÀÓ ½ÃÀÛ Àü Ä«µå¸¦ ¹èÄ¡ÇÏ´Â ¸Þ¼Òµå
-    /// Ä«µå ¹èÄ¡ -> Start »ç¿îµå -> ¸ðµå¸¦ °ÔÀÓ ¸ðµå·Î º¯°æ
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Ä«ï¿½å¸¦ ï¿½ï¿½Ä¡ï¿½Ï´ï¿½ ï¿½Þ¼Òµï¿½
+    /// Ä«ï¿½ï¿½ ï¿½ï¿½Ä¡ -> Start ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public IEnumerator CreateCard()
     {
         AudioManager.instance.Stop();
 
-        // Ä«µåÀÇ ¹è¿­À» ¼öµ¿ÀûÀ¸·Î »ý¼º ¹®Á¦
+        // Ä«ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         // int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
         int[] arr = new int[Resources.LoadAll<Sprite>("Images/CardImages").Length * 2] ;
 
@@ -31,7 +36,7 @@ public class Board : MonoBehaviour
             arr[q] = q / 2;
         }
 
-        // ¹è¿­ ¼ö ¸¸Å­ ·£´ýÇÏ°Ô ³ª´®
+        // ï¿½è¿­ ï¿½ï¿½ ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
         arr = arr.OrderBy(x => Random.Range(0f, arr.Length)).ToArray();
 
         int i = 0; 
@@ -50,6 +55,47 @@ public class Board : MonoBehaviour
             yield return new WaitUntil(() => Vector3.Distance(dest, cd.transform.position) <= 0f);
 
             i++;
+    public int CardCount;
+    public int ImageCount = 8;
+    public int[] arr;
+    private List<int> randomList = new List<int>();
+
+    public bool[] CardMap = new bool[16];
+
+    void Start()
+    {
+        foreach(bool b in CardMap)
+        {
+            if (b) CardCount++;
+        }
+        if(CardCount % 2 == 1 || CardCount < 2)
+        {
+            Debug.Log("Ä«ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ È¦ï¿½ï¿½ ï¿½Ì°Å³ï¿½ 1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.");
+            Application.Quit();
+        }
+        if (CardCount / 2 < ImageCount)
+        {
+            Debug.Log("ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
+            Application.Quit();
+        }
+
+        arr = new int[CardCount];
+        CreateUnDuplicateRandomArray();
+
+        int temp = 0;
+        for (int i = 0; i < 16; i++)
+        {
+            if (CardMap[i])
+            {
+                GameObject go = Instantiate(card, this.transform);
+
+                float x = (i % 4) * 1.4f - 2.1f;
+                float y = 1.2f - (i / 4) * 1.4f;
+
+                go.transform.position = new Vector2(x, y);
+                go.GetComponent<Card>().Setting(arr[temp]);
+                temp++;
+            }
         }
 
         GameManager.instance.cardCount = arr.Length;
@@ -78,4 +124,24 @@ public class Board : MonoBehaviour
 
         GameManager.instance.cardCount = arr.Length;
      */
+    void CreateUnDuplicateRandomArray()
+    {
+        int currentNumber = Random.Range(0, ImageCount);
+        for (int i = 0; i < CardCount ; )
+        {
+            if (randomList.Contains(currentNumber))
+            {
+                currentNumber = Random.Range(0, ImageCount);
+            }
+            else
+            {
+                randomList.Add(currentNumber);
+                arr[i] = currentNumber;
+                arr[i + 1] = currentNumber;
+                i+=2;
+            }
+        }
+        arr = arr.OrderBy(x => Random.Range(0, ImageCount-1)).ToArray();
+    }
+
 }

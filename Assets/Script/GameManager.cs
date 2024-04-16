@@ -45,15 +45,35 @@ public class GameManager : MonoBehaviour
     }
 
     public Text timeTxt;
-    public Text limitTimeTxt; // Á¦ÇÑ ½Ã°£ ÅØ½ºÆ®
-    public Text resultTxt; // °á°ú ÅØ½ºÆ®
-    public GameObject minusTimeTxt; // ½Ã°£ °¨¼Ò ¾Ë·ÁÁÖ´Â ÅØ½ºÆ®
+    public Text limitTimeTxt; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½Ø½ï¿½Æ®
+    public Text resultTxt; // ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ®
+    public GameObject minusTimeTxt; // ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë·ï¿½ï¿½Ö´ï¿½ ï¿½Ø½ï¿½Æ®
     public GameObject endTxt;
     public Card firstCard;
     public Card secondCard;
 
     float time = 15.0f;
     float countdownTime = 5f;
+    public Text BestScoreTxt;
+    public Text CurrentScoreTxt;
+    public Text TryTimesTxt;
+
+    public Text ResultTimeTxt;
+    public Text ResultTryTimesTxt;
+    public Text ResultCurrentScoreTxt;
+
+    [SerializeField] int TimeVar = 100;
+    [SerializeField] int TryVar = 1;
+
+    public GameObject endOverlay;
+    public Card firstCard;
+    public Card secondCard;
+
+    float time = 0;
+    [SerializeField] int BestScore = 0;
+    int CurrentScore;
+    int TryTimes;
+
     public int cardCount = 0;
     public float speed = 0;
 
@@ -71,6 +91,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         state = Define.GameState.Ready;
         Ready();
+        CurrentScore = 0;
+        TryTimes = 0;
         audioSource = GetComponent<AudioSource>();
         resultTxt.text = "";
     }
@@ -95,8 +117,8 @@ public class GameManager : MonoBehaviour
     }
     private void OpenCountDown()
     {
-        // firstCard°¡ nullÀÌ ¾Æ´Ï°í SecondCard°¡ nullÀÏ ¶§ 5ÃÊ ¼¼°í Ä«µå ´Ý±â
-        // Ã¹¹øÂ° Ä«µå¸¦ ´­·¶À» ¶§
+        // firstCardï¿½ï¿½ nullï¿½ï¿½ ï¿½Æ´Ï°ï¿½ SecondCardï¿½ï¿½ nullï¿½ï¿½ ï¿½ï¿½ 5ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½ ï¿½Ý±ï¿½
+        // Ã¹ï¿½ï¿½Â° Ä«ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         if (firstCard != null && secondCard == null)
         {
             countdownTime -= Time.deltaTime;
@@ -114,6 +136,14 @@ public class GameManager : MonoBehaviour
         {
             limitTimeTxt.gameObject.SetActive(false);
             countdownTime = 5f;
+        time += Time.deltaTime;
+        timeTxt.text = time.ToString("N2");
+        BestScoreTxt.text = BestScore.ToString() ;
+        CurrentScoreTxt.text = CurrentScore.ToString();
+        TryTimesTxt.text = TryTimes.ToString();
+        if (time > 30f)
+        {
+            EndGame();
         }
     }
 
@@ -134,7 +164,7 @@ public class GameManager : MonoBehaviour
         }
         else if (time < 10f)
         {
-            // TODO Å¸ÀÌ¸ÓÀÇ »ö±ò º¯°æ
+            // TODO Å¸ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             timeTxt.color = Color.red;
 
 
@@ -158,6 +188,9 @@ public class GameManager : MonoBehaviour
     public void isMatched()
     {
         if (firstCard.idx == secondCard.idx)
+        TryTimes++;
+        UpdateScore();
+        if(firstCard.idx == secondCard.idx)
         {
             audioSource.PlayOneShot(clip);
             firstCard.DestroyCard();
@@ -165,14 +198,13 @@ public class GameManager : MonoBehaviour
             cardCount -= 2;
             if (cardCount == 0)
             {
-                Time.timeScale = 0;
-                endTxt.SetActive(true);
+                EndGame();
             }
             string name = "";
             switch (firstCard.idx)
             {
                 case 0:
-                    name = "È²¿À¿µ";
+                    name = "È²ï¿½ï¿½ï¿½ï¿½";
                     break;
 
             }
@@ -186,13 +218,13 @@ public class GameManager : MonoBehaviour
 
             audioSource.clip = AudioManager.instance.failClip;
             audioSource.Play();
-            resultTxt.text = "½ÇÆÐ";
+            resultTxt.text = "ï¿½ï¿½ï¿½ï¿½";
             resultTxt.color = Color.red;
 
 
             minusTimeTxt.SetActive(true);
-            time -= 1; // ¸ø¸ÂÃß¸é ½Ã°£ -1ÃÊ
-            Invoke("TimeMinus", 0.5f); // 0.5ÃÊµ¿¾È ÅØ½ºÆ® ½ÇÇà
+            time -= 1; // ï¿½ï¿½ï¿½ï¿½ï¿½ß¸ï¿½ ï¿½Ã°ï¿½ -1ï¿½ï¿½
+            Invoke("TimeMinus", 0.5f); // 0.5ï¿½Êµï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         }
 
         firstCard = null;
@@ -201,5 +233,16 @@ public class GameManager : MonoBehaviour
     public void TimeMinus()
     {
         minusTimeTxt.SetActive(false);
+    public void UpdateScore()
+    {
+        CurrentScore = (int)(time * TimeVar - TryTimes * TryVar);
+    }
+    public void EndGame()
+    {
+        ResultTimeTxt.text = timeTxt.text;
+        ResultTryTimesTxt.text = TryTimesTxt.text;
+        ResultCurrentScoreTxt.text = CurrentScoreTxt.text;
+        endOverlay.SetActive(true);
+        Time.timeScale = 0f;
     }
 }

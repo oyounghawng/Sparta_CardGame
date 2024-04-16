@@ -1,13 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
 
-    AudioSource audioSource;
+    public AudioSource bgm;
+    public AudioSource effect;
+
     public AudioClip clip;
+    public AudioClip alert;
+    public AudioClip startSound;
+    public AudioClip cardSet;
+
 
     private void Awake()
     {
@@ -22,10 +27,82 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        audioSource.clip = this.clip;
-        audioSource.Play();
+        Play();
+    }
+
+    private void Update()
+    {
+        if (bgm.clip == startSound)
+        {
+            if (bgm.time >= startSound.length - 0.1f)
+            {
+                Stop();
+                
+                GameManager.instance.Play();
+            }
+        }
+    }
+
+    private void OnEnable()
+    {
+        GameManager.instance.onPlay += Play;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.instance.onPlay -= Play;
+    }
+
+
+
+    public void Play()
+    {
+        if(bgm != null)
+        {
+            if(clip != null)
+            {
+                bgm.clip = this.clip;
+                bgm.loop = true;
+                bgm.Play();
+            }
+        }
+    }
+
+    public void Play(AudioClip clip)
+    {
+        if (bgm != null)
+        {
+            if (clip != null)
+            {
+                bgm.clip = clip;
+                bgm.loop = true;
+                bgm.Play();
+            }
+        }
+    }
+
+    public void Stop()
+    {
+        if(bgm != null)
+        {
+            if(bgm.isPlaying)
+            {
+                bgm.Stop();
+            }
+        }
+    }
+    public void PlayOneShot(AudioClip clip, float volume)
+    {
+        if(effect != null)
+        {
+            if(effect.isPlaying)
+            {
+                effect.Stop();
+            }
+            effect.PlayOneShot(clip, volume);
+
+        }
     }
 }

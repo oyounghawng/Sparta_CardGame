@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     AudioSource audioSource;
     public AudioClip clip;
+    public AudioClip failclip;
+    public AudioClip startClip;
     private void Awake()
     {
         if (instance == null)
@@ -28,6 +30,10 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         audioSource = GetComponent<AudioSource>();
+
+        //지연시작 방식 진행 방식 고민
+        audioSource.clip = startClip;
+        audioSource.Play();
     }
     private void Update()
     {
@@ -58,6 +64,8 @@ public class GameManager : MonoBehaviour
         {
             firstCard.CloseCard();
             secondCard.CloseCard();
+            audioSource.clip = failclip;
+            audioSource.Play();
         }
 
         firstCard = null;

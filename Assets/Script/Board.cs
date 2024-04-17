@@ -23,7 +23,7 @@ public class Board : MonoBehaviour
 
     private int level = 0;
 
-    public bool[] CardMap = new bool[20];
+    //public bool[] CardMap = new bool[20];
 
     public MapArray[] stageArray;
 
@@ -44,17 +44,16 @@ public class Board : MonoBehaviour
 
         // 카드의 배열을 수동적으로 생성 문제
         // int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
-        int[] arr = new int[Resources.LoadAll<Sprite>("Images/TeamPic").Length * 2];
-        ImageCount = arr.Length / 2;
-        for (int q = 0; q < arr.Length; q++)
-        {
-            arr[q] = q / 2;
-        }
+        ImageCount = Resources.LoadAll<Sprite>("Images/TeamPic").Length;
+        //for (int q = 0; q < arr.Length; q++)
+        //{
+        //    arr[q] = q / 2;
+        //}
 
         // 배열 수 만큼 랜덤하게 나눔
         //arr = arr.OrderBy(x => Random.Range(0f, arr.Length)).ToArray();
 
-        foreach (bool b in CardMap)
+        foreach (bool b in stageArray[level].map)
         {
             if (b) CardCount++;
         }
@@ -77,27 +76,26 @@ public class Board : MonoBehaviour
         */
 
         //arr = new int[CardCount];
-        int i = 0;
+        //int i = 0;
         arr = new int[CardCount];
-        //CreateDuplicateRandomArray();
-        while (i < CardCount)
+        CreateDuplicateRandomArray();
+
+        int temp = 0;
+        for (int i = 0; i < 20; i++)
         {
             if (stageArray[level].map[i])
             {
-
                 GameObject go = Instantiate(card, this.transform);
                 float x = (i % 4) * 1.4f - 2.1f;
-                float y = (i / 4) * 1.4f - 3.0f;
-                //float y = 1.6f - (i / 4) * 1.4f;
+                float y = 1.6f - (i / 4) * 1.4f;
                 Vector3 dest = new Vector3(x, y, 0f);
                 go.transform.position = dest + new Vector3(x + 2f, y - 2f, 0);
                 Card cd = go.GetComponent<Card>();
                 cd.Dest = dest;
-                cd.Setting(arr[i]);
+                cd.Setting(arr[temp]);
                 yield return new WaitUntil(() => Vector3.Distance(dest, cd.transform.position) <= 0f);
+                temp++;
             }
-            i++;
-
         }
         GameManager.instance.cardCount = arr.Length;
         AudioManager.instance.Play(AudioManager.instance.startSound);

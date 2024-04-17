@@ -12,4 +12,12 @@ public class Define
         Clear,
         GameOver
     }
+
+    public enum SceceName
+    {
+        None,
+        StartScene,
+        StageScene,
+        MainScene,
+    }
 }

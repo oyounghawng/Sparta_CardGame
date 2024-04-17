@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -39,7 +40,7 @@ public class AudioManager : MonoBehaviour
             if (bgm.time >= startSound.length - 0.1f)
             {
                 Stop();
-                
+
                 GameManager.instance.Play();
             }
         }

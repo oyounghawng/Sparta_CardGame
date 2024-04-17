@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 public class GameManager : MonoBehaviour
@@ -12,41 +13,45 @@ public class GameManager : MonoBehaviour
     {
         // AudioManager.instance.Stop();
         timeTxt.gameObject.SetActive(false);
+        BestScoreTxt.text = LoadBestRecord(stageLevel).ToString();
     }
 
     public event Action onPlay;
-
     public void Play()
     {
-        if (onPlay != null)
-        {
-            state = Define.GameState.Play;
-            timeTxt.gameObject.SetActive(true);
-            onPlay.Invoke();
-            AudioManager.instance.Play();
-        }
+        state = Define.GameState.Play;
+        timeTxt.gameObject.SetActive(true);
+        AudioManager.instance.Play();
+        onPlay?.Invoke();
     }
 
     public event Action onClear;
 
-    public void Clear()
+    public void GameClear()
     {
-        if (onClear != null)
-            onClear.Invoke();
+        StopAllCoroutines();
+        UpdateScore();
+        ResultTimeTxt.text = timeTxt.text;
+        ResultTryTimesTxt.text = TryTimesTxt.text;
+        ResultCurrentScoreTxt.text = CurrentScoreTxt.text;
+        endOverlay.SetActive(true);
+        Time.timeScale = 0f;
+        onClear?.Invoke();
     }
 
     public event Action onGameOver;
 
     public void GameOver()
     {
-        if (onGameOver != null)
-            onGameOver.Invoke();
+        StopAllCoroutines();
+        endOverlay.SetActive(true);
+        onGameOver?.Invoke();
     }
     #endregion
 
-    [Header("TimeText")]
-    public int level;
+    public int stageLevel;
 
+    [Header("TimeText")]
     public Text timeTxt;
     public Text limitTimeTxt;
     public Text resultTxt;
@@ -76,13 +81,14 @@ public class GameManager : MonoBehaviour
     public GameObject endOverlay;
     [SerializeField] int BestScore = 0;
 
-    float time = 15.0f;
+    float playTime = 15.0f;
     float countdownTime = 5f;
     int CurrentScore;
     int TryTimes;
 
     public int cardCount = 0;
     public float speed = 0;
+    private bool isEmphasis = false;
 
     AudioSource audioSource;
     public AudioClip clip;
@@ -95,40 +101,29 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        level = PlayerPrefs.GetInt("Level");
+        audioSource = GetComponent<AudioSource>();
+        stageLevel = PlayerPrefs.GetInt("Level");
         Time.timeScale = 1f;
         state = Define.GameState.Ready;
         Ready();
         CurrentScore = 0;
         TryTimes = 0;
-        audioSource = GetComponent<AudioSource>();
         resultTxt.text = "";
+
     }
     private void Update()
     {
         switch (state)
-        { 
+        {
             case Define.GameState.Ready:
-
                 break;
             case Define.GameState.Play:
                 GamePlay();
+                OpenCountDown();
                 break;
             case Define.GameState.Clear:
-
-                break;
-            case Define.GameState.GameOver:
-
                 break;
         }
-        UpdateUIScore();
-        OpenCountDown();
-    }
-    private void UpdateUIScore()
-    {
-        BestScoreTxt.text = LoadBestRecord(level).ToString();
-        CurrentScoreTxt.text = CurrentScore.ToString();
-        TryTimesTxt.text = TryTimes.ToString();
     }
     private void OpenCountDown()
     {
@@ -143,7 +138,7 @@ public class GameManager : MonoBehaviour
             if (countdownTime < 1f)
             {
                 limitTimeTxt.gameObject.SetActive(false);
-                firstCard.CloseCard();
+                firstCard.CloseCardInvoke();
                 firstCard = null;
             }
         }
@@ -151,66 +146,76 @@ public class GameManager : MonoBehaviour
         {
             limitTimeTxt.gameObject.SetActive(false);
             countdownTime = 5f;
-            time += Time.deltaTime;
-            timeTxt.text = time.ToString("N2");
-            BestScoreTxt.text = BestScore.ToString();
-            CurrentScoreTxt.text = CurrentScore.ToString();
-            TryTimesTxt.text = TryTimes.ToString();
-            if (time > 30f)
-            {
-                EndGame();
-            }
         }
     }
     private void GamePlay()
     {
-        time -= Time.deltaTime;
-        timeTxt.text = time.ToString("N2");
+        playTime -= Time.deltaTime;
+        timeTxt.text = playTime.ToString("N2");
 
-
-        if (time <= 0f)
+        if (playTime <= 0f)
         {
             Time.timeScale = 0f;
             timeTxt.text = "0.00";
             timeTxt.rectTransform.localScale = new Vector3(1, 1, 1);
-
-            endTxt.SetActive(true);
-
+            GameOver();
         }
-        else if (time < 10f)
+        else if (playTime < 10f)
         {
+            if (!isEmphasis)
+                StartCoroutine(Emphasis(timeTxt.gameObject));
+
             timeTxt.color = Color.red;
 
             float alertSize = 0;
 
-            if (timeTxt.rectTransform.localScale.x <= 1.0f)
-            {
-                alertSize = Mathf.Lerp(timeTxt.rectTransform.localScale.x, speed, 1f * Time.deltaTime);
+            alertSize = Mathf.Lerp(timeTxt.rectTransform.localScale.x, speed, 1f * Time.deltaTime);
 
-                if (alertSize >= 1.0f)
-                {
-                    AudioManager.instance.PlayOneShot(AudioManager.instance.alert, 0.35f);
-                }
+            if (alertSize >= 1.0f)
+            {
+                AudioManager.instance.PlayOneShot(AudioManager.instance.alert, 0.35f);
             }
+
+            
 
             timeTxt.rectTransform.localScale = new Vector3(alertSize, alertSize, 1);
         }
     }
+    private IEnumerator Emphasis(GameObject gameObject)
+    {
+        isEmphasis = true;
+        float increase = 0.1f;
+        while (true)
+        {
+            while (gameObject.GetComponent<Transform>().localScale.x > 0.5f)
+            {
+                gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x - increase
+                                                                , gameObject.transform.localScale.y - increase
+                                                                , gameObject.transform.localScale.z - increase);
+                yield return new WaitForSeconds(0.05f); 
+            }
+            yield return new WaitForSeconds(0.05f); 
+            while (gameObject.GetComponent<Transform>().localScale.x < 1f)
+            {
+                gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x + increase
+                                                                , gameObject.transform.localScale.y + increase
+                                                                , gameObject.transform.localScale.z + increase);
+                yield return new WaitForSeconds(0.05f); 
+            }
+            yield return new WaitForSeconds(0.05f); 
+        }
+    }
     public void isMatched()
     {
-        if (firstCard.idx == secondCard.idx)
-            TryTimes++;
+        TryTimes++;
         UpdateScore();
+        UpdateUIScore();
         if (firstCard.idx == secondCard.idx)
         {
             audioSource.PlayOneShot(clip);
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;
-            if (cardCount == 0)
-            {
-                EndGame();
-            }
             string name = "";
             switch (firstCard.idx)
             {
@@ -253,12 +258,15 @@ public class GameManager : MonoBehaviour
 
 
             minusTimeTxt.SetActive(true);
-            time -= 1; //못맞추면 시간 -1초
+            playTime -= 1; //못맞추면 시간 -1초
             Invoke("TimeMinus", 0.5f); //0.5초동안 텍스트 실행
         }
-
         firstCard = null;
         secondCard = null;
+        if (cardCount == 0)
+        {
+            GameClear();
+        }
     }
     public void TimeMinus()
     {
@@ -266,11 +274,11 @@ public class GameManager : MonoBehaviour
     }
     public void UpdateScore()
     {
-        CurrentScore = (int)(time * TimeVar - TryTimes * TryVar);
-        int BestScore = LoadBestRecord(level);
+        CurrentScore = (int)(playTime * TimeVar - TryTimes * TryVar);
+        int BestScore = LoadBestRecord(stageLevel);
         if (CurrentScore > BestScore)
         {
-            SaveBestRecord(CurrentScore, level);
+            SaveBestRecord(CurrentScore, stageLevel);
         }
         /////////////////////////// inspector�� �ְ���� Ȯ�ο� ////////////////////////////////
         for (int i = 0; i < 3; i++)
@@ -278,14 +286,10 @@ public class GameManager : MonoBehaviour
             BestRecords[i] = LoadBestRecord(i);
         }
     }
-    public void EndGame()
+    private void UpdateUIScore()
     {
-        UpdateScore();
-        ResultTimeTxt.text = timeTxt.text;
-        ResultTryTimesTxt.text = TryTimesTxt.text;
-        ResultCurrentScoreTxt.text = CurrentScoreTxt.text;
-        endOverlay.SetActive(true);
-        Time.timeScale = 0f;
+        CurrentScoreTxt.text = CurrentScore.ToString();
+        TryTimesTxt.text = TryTimes.ToString();
     }
     public void SaveBestRecord(int score, int level)
     {

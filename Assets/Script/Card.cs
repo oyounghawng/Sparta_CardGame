@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Card : MonoBehaviour
@@ -9,8 +11,8 @@ public class Card : MonoBehaviour
     public GameObject back;
 
     public Animator anim;
-    public SpriteRenderer frontImage;
-    public SpriteRenderer backImage;
+    private SpriteRenderer frontImage;
+    private SpriteRenderer backImage;
 
     AudioSource audioSource;
     public AudioClip clip;
@@ -30,6 +32,11 @@ public class Card : MonoBehaviour
             _dest = value;
             isMove = true;
         }
+    }
+    private void Awake()
+    {
+        frontImage = transform.GetComponentsInChildren<SpriteRenderer>()[0];
+        backImage = transform.GetComponentsInChildren<SpriteRenderer>()[1];
     }
 
     private void Start()
@@ -55,6 +62,8 @@ public class Card : MonoBehaviour
     {
         GameManager.instance.onPlay -= CanTouch;
     }
+
+
     public void CanTouch() => canTouch = true;
     public void MoveCurve(Vector3 dest)
     {
@@ -73,7 +82,6 @@ public class Card : MonoBehaviour
     {
         idx = number;
         frontImage.sprite = Resources.Load<Sprite>($"Images/TeamPic/{idx}");
-        backImage = transform.Find("Back").GetComponent<SpriteRenderer>();
     }
 
     public void OnepnCard()
@@ -84,9 +92,6 @@ public class Card : MonoBehaviour
 
             audioSource.PlayOneShot(clip);
             anim.SetBool("isOpen", true);
-            front.SetActive(true);
-            back.SetActive(false);
-
             // 클릭된 카드 뒷면 색깔 회색으로 고정
             backImage.color = new Color(200 / 255f, 200 / 255f, 200 / 255f, 255f);
 
@@ -119,8 +124,5 @@ public class Card : MonoBehaviour
     public void CloseCardInvoke()
     {
         anim.SetBool("isOpen", false);
-        front.SetActive(false);
-        back.SetActive(true);
     }
-
 }

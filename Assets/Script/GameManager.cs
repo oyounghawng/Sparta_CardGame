@@ -162,29 +162,25 @@ public class GameManager : MonoBehaviour
         }
         else if (playTime < 10f)
         {
+            // (변경점) 코루틴 실행 전 색깔 변경 먼저 실행
+            timeTxt.color = Color.red;
+
             if (!isEmphasis)
                 StartCoroutine(Emphasis(timeTxt.gameObject));
 
-            timeTxt.color = Color.red;
 
-            float alertSize = 0;
-
-            alertSize = Mathf.Lerp(timeTxt.rectTransform.localScale.x, speed, 1f * Time.deltaTime);
-
-            if (alertSize >= 1.0f)
-            {
-                AudioManager.instance.PlayOneShot(AudioManager.instance.alert, 0.35f);
-            }
-
-            
-
-            timeTxt.rectTransform.localScale = new Vector3(alertSize, alertSize, 1);
+            /*
+             * (변경점)
+            * 남은 코드 삭제
+            */
         }
     }
     private IEnumerator Emphasis(GameObject gameObject)
     {
         isEmphasis = true;
-        float increase = 0.1f;
+
+        // (변경점) increase 속도 변환 -> 0.08이 가장 아름다운 속도
+        float increase = 0.08f;
         while (true)
         {
             while (gameObject.GetComponent<Transform>().localScale.x > 0.5f)
@@ -202,7 +198,10 @@ public class GameManager : MonoBehaviour
                                                                 , gameObject.transform.localScale.z + increase);
                 yield return new WaitForSeconds(0.05f); 
             }
-            yield return new WaitForSeconds(0.05f); 
+            yield return new WaitForSeconds(0.05f);
+
+            // (변경점) if(alertSize >1.0f) 내의 코드를 이곳으로 이동
+            AudioManager.instance.PlayOneShot(AudioManager.instance.alert, 0.35f);
         }
     }
     public void isMatched()

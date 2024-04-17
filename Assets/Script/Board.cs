@@ -40,18 +40,11 @@ public class Board : MonoBehaviour
     /// </summary>
     public IEnumerator CreateCard()
     {
+        level = GameManager.instance.stageLevel;
+
         AudioManager.instance.Stop();
 
-        // 카드의 배열을 수동적으로 생성 문제
-        // int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
         ImageCount = Resources.LoadAll<Sprite>("Images/TeamPic").Length;
-        //for (int q = 0; q < arr.Length; q++)
-        //{
-        //    arr[q] = q / 2;
-        //}
-
-        // 배열 수 만큼 랜덤하게 나눔
-        //arr = arr.OrderBy(x => Random.Range(0f, arr.Length)).ToArray();
 
         foreach (bool b in stageArray[level].map)
         {

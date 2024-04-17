@@ -31,6 +31,7 @@ public class Board : MonoBehaviour
 
     void Start()
     {
+        level = GameManager.instance.stageLevel;
         StartCoroutine(CreateCard());
     }
 
@@ -57,23 +58,24 @@ public class Board : MonoBehaviour
         {
             if (b) CardCount++;
         }
+       
+        
         /*
-        level = GameManager.instance.level;
-        foreach (bool b in stageArray[level].map)
-        {
-            if (b) CardCount++;
-        }
-        if (CardCount % 2 == 1 || CardCount < 2)
-        {
-            Debug.Log("카드 수 가 홀수 이거나 1개 이하입니다.");
-            Application.Quit();
-        }
-        if (CardCount / 2 < ImageCount)
-        {
-            Debug.Log("이미지의 종류가 부족합니다.");
-            Application.Quit();
-        }
-        */
+       foreach (bool b in stageArray[level].map)
+       {
+           if (b) CardCount++;
+       }
+       if (CardCount % 2 == 1 || CardCount < 2)
+       {
+           Debug.Log("카드 수 가 홀수 이거나 1개 이하입니다.");
+           Application.Quit();
+       }
+       if (CardCount / 2 < ImageCount)
+       {
+           Debug.Log("이미지의 종류가 부족합니다.");
+           Application.Quit();
+       }
+       */
 
         //arr = new int[CardCount];
         //int i = 0;

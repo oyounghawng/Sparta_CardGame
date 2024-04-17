@@ -44,6 +44,10 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         StopAllCoroutines();
+        UpdateScore();
+        ResultTimeTxt.text = timeTxt.text;
+        ResultTryTimesTxt.text = TryTimesTxt.text;
+        ResultCurrentScoreTxt.text = CurrentScoreTxt.text;
         endOverlay.SetActive(true);
         onGameOver?.Invoke();
     }

@@ -8,16 +8,16 @@ public class MoveStage : MonoBehaviour
     public void MoveToStage_0()
     {
         PlayerPrefs.SetInt("Level", 0);
-        SceneManager.LoadScene("MainScene_2");
+        SceneManager.LoadScene("MainScene");
     }
     public void MoveToStage_1()
     {
         PlayerPrefs.SetInt("Level", 1);
-        SceneManager.LoadScene("MainScene_2");
+        SceneManager.LoadScene("MainScene");
     }
     public void MoveToStage_2()
     {
         PlayerPrefs.SetInt("Level", 2);
-        SceneManager.LoadScene("MainScene_2");
+        SceneManager.LoadScene("MainScene");
     }
 }

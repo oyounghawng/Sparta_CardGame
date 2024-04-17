@@ -1,19 +1,13 @@
-using UnityEngine;
-using UnityEngine.UI;
-using System;
 using System.Collections;
 using System.Linq;
+using UnityEngine;
 using Random = UnityEngine.Random;
-using System.Security.Cryptography.X509Certificates;
-using System.Collections.Generic;
 
 [System.Serializable]
 public struct MapArray
 {
     public bool[] map;
 }
-
-
 public class Board : MonoBehaviour
 {
     public GameObject card;
@@ -43,42 +37,12 @@ public class Board : MonoBehaviour
     {
         AudioManager.instance.Stop();
 
-        // 카드의 배열을 수동적으로 생성 문제
-        // int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
         ImageCount = Resources.LoadAll<Sprite>("Images/TeamPic").Length;
-        //for (int q = 0; q < arr.Length; q++)
-        //{
-        //    arr[q] = q / 2;
-        //}
-
-        // 배열 수 만큼 랜덤하게 나눔
-        //arr = arr.OrderBy(x => Random.Range(0f, arr.Length)).ToArray();
-
         foreach (bool b in stageArray[level].map)
         {
             if (b) CardCount++;
         }
-       
-        
-        /*
-       foreach (bool b in stageArray[level].map)
-       {
-           if (b) CardCount++;
-       }
-       if (CardCount % 2 == 1 || CardCount < 2)
-       {
-           Debug.Log("카드 수 가 홀수 이거나 1개 이하입니다.");
-           Application.Quit();
-       }
-       if (CardCount / 2 < ImageCount)
-       {
-           Debug.Log("이미지의 종류가 부족합니다.");
-           Application.Quit();
-       }
-       */
 
-        //arr = new int[CardCount];
-        //int i = 0;
         arr = new int[CardCount];
         CreateDuplicateRandomArray();
 

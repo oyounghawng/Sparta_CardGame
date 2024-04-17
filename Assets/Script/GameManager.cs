@@ -35,6 +35,11 @@ public class GameManager : MonoBehaviour
         ResultTryTimesTxt.text = TryTimesTxt.text;
         ResultCurrentScoreTxt.text = CurrentScoreTxt.text;
         endOverlay.SetActive(true);
+        int BestScore = LoadBestRecord(stageLevel);
+        if (CurrentScore > BestScore)
+        {
+            SaveBestRecord(CurrentScore, stageLevel);
+        }
         Time.timeScale = 0f;
         onClear?.Invoke();
     }
@@ -49,6 +54,11 @@ public class GameManager : MonoBehaviour
         ResultTryTimesTxt.text = TryTimesTxt.text;
         ResultCurrentScoreTxt.text = CurrentScoreTxt.text;
         endOverlay.SetActive(true);
+        int BestScore = LoadBestRecord(stageLevel);
+        if (CurrentScore > BestScore)
+        {
+            SaveBestRecord(CurrentScore, stageLevel);
+        }
         onGameOver?.Invoke();
     }
     #endregion
@@ -76,7 +86,7 @@ public class GameManager : MonoBehaviour
     public Text ResultTryTimesTxt;
     public Text ResultCurrentScoreTxt;
 
-    [SerializeField] int TimeVar = 100;
+    [SerializeField] int TimeVar = 10;
     [SerializeField] int TryVar = 1;
 
     /////////////////////////// inspector로 최고기록 확인용 ////////////////////////////////
@@ -85,7 +95,7 @@ public class GameManager : MonoBehaviour
     public GameObject endOverlay;
     [SerializeField] int BestScore = 0;
 
-    float playTime = 15.0f;
+    float playTime;
     float countdownTime = 5f;
     int CurrentScore;
     int TryTimes;
@@ -107,13 +117,29 @@ public class GameManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         stageLevel = PlayerPrefs.GetInt("Level");
+        switch(stageLevel)
+        {
+            case 0:
+                playTime = 30f;
+                break;
+            case 1:
+                playTime = 45f;
+                break;
+            case 2:
+                playTime = 60f;
+                break;
+            default:
+                playTime = 20f;
+                break;
+        }
+
         Time.timeScale = 1f;
         state = Define.GameState.Ready;
         Ready();
         CurrentScore = 0;
         TryTimes = 0;
         resultTxt.text = "";
-
+        
     }
     private void Update()
     {
@@ -279,11 +305,6 @@ public class GameManager : MonoBehaviour
     public void UpdateScore()
     {
         CurrentScore = (int)(playTime * TimeVar - TryTimes * TryVar);
-        int BestScore = LoadBestRecord(stageLevel);
-        if (CurrentScore > BestScore)
-        {
-            SaveBestRecord(CurrentScore, stageLevel);
-        }
         /////////////////////////// inspector�� �ְ���� Ȯ�ο� ////////////////////////////////
         for (int i = 0; i < 3; i++)
         {

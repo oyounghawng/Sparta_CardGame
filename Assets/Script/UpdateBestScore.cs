@@ -14,10 +14,9 @@ public class UpdateBestScore : MonoBehaviour
     public GameObject HardStage;
     public GameObject HardStageInactive;
 
-    [SerializeField] private int UnlockNormalStage = 2000;
-    [SerializeField] private int UnlockHardStage = 2000;
+    private int UnlockNormalStage = 1000;
+    private int UnlockHardStage = 1500;
 
-    // Start is called before the first frame update
     void Start()
     {
         ActiveStages();

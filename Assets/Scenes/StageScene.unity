@@ -358,8 +358,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uC774\uC804 \uB09C\uC774\uB3C4 2000\uC810 \uC774\uC0C1 \uB2EC\uC131 \uC2DC
-    \uD574\uAE08"
+  m_Text: "Easy \uB09C\uC774\uB3C4 1000\uC810 \uC774\uC0C1 \uB2EC\uC131 \uC2DC \uD574\uAE08"
 --- !u!222 &304052772
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1478,7 +1477,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uC774\uC804 \uB09C\uC774\uB3C4 2000\uC810 \uC774\uC0C1 \uB2EC\uC131 \uC2DC
+  m_Text: "Normal \uB09C\uC774\uB3C4 1500\uC810 \uC774\uC0C1 \uB2EC\uC131 \uC2DC
     \uD574\uAE08"
 --- !u!222 &1291490025
 CanvasRenderer:

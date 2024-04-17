@@ -12,7 +12,8 @@ public class GameManager : MonoBehaviour
     public void Ready()
     {
         // AudioManager.instance.Stop();
-        timeTxt.gameObject.SetActive(false);
+        timeTxt.gameObject.SetActive(true);
+        timeTxt.text = playTime.ToString("N2");
         BestScoreTxt.text = LoadBestRecord(stageLevel).ToString();
     }
 
